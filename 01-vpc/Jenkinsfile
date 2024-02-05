@@ -10,22 +10,31 @@ pipeline {
     }
     // build
     stages {
-        stage('Build') {
-            steps {
-                echo 'Building..'
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Testing..'
-            }
-        }
-        stage('Deploy') {
+        stage('Init') {
             steps {
                 sh """
-                    echo "hello shellscript"
-                    echo $GREETING
-                    #sleep 10
+                    cd 01-vpc
+                    terraform init -reconfigure
+                """
+            }
+        }
+        stage('Plan') {
+            steps {
+                sh """
+                    cd 01-vpc
+                    terraform plan
+                """
+            }
+        }
+        stage('Apply') {
+            input {
+                message "Should we continue?"
+                ok "Yes, we should."
+            }
+            steps {
+                sh """
+                    cd 01-vpc
+                    terraform apply -auto-approve
                 """
             }
         }
