@@ -39,6 +39,7 @@ resource "null_resource" "mongodb" {
   provisioner "remote-exec" {
     # Bootstrap script called with private_ip of each node in the cluster
     inline = [
+      "sed -i 's/\r//g' /tmp/bootstrap.sh",
       "chmod +x /tmp/bootstrap.sh",
       "sudo sh /tmp/bootstrap.sh mongodb dev"
     ]
@@ -86,6 +87,7 @@ resource "null_resource" "redis" {
   provisioner "remote-exec" {
     # Bootstrap script called with private_ip of each node in the cluster
     inline = [
+      "sed -i 's/\r//g' /tmp/bootstrap.sh",
       "chmod +x /tmp/bootstrap.sh",
       "sudo sh /tmp/bootstrap.sh redis dev"
     ]
@@ -99,7 +101,7 @@ module "mysql" {
   instance_type          = "t3.small"
   vpc_security_group_ids = [data.aws_ssm_parameter.mysql_sg_id.value]
   subnet_id              = local.database_subnet_id
-  iam_instance_profile = "ShellScriptRoleForRoboshop"
+  iam_instance_profile = "ec2roleshellscript"
   tags = merge(
     var.common_tags,
     {
@@ -134,6 +136,7 @@ resource "null_resource" "mysql" {
   provisioner "remote-exec" {
     # Bootstrap script called with private_ip of each node in the cluster
     inline = [
+      "sed -i 's/\r//g' /tmp/bootstrap.sh",
       "chmod +x /tmp/bootstrap.sh",
       "sudo sh /tmp/bootstrap.sh mysql dev"
     ]
@@ -147,7 +150,7 @@ module "rabbitmq" {
   instance_type          = "t3.small"
   vpc_security_group_ids = [data.aws_ssm_parameter.rabbitmq_sg_id.value]
   subnet_id              = local.database_subnet_id
-  iam_instance_profile = "ShellScriptRoleForRoboshop"
+  iam_instance_profile = "ec2roleshellscript"
   tags = merge(
     var.common_tags,
     {
@@ -182,6 +185,7 @@ resource "null_resource" "rabbitmq" {
   provisioner "remote-exec" {
     # Bootstrap script called with private_ip of each node in the cluster
     inline = [
+      "sed -i 's/\r//g' /tmp/bootstrap.sh",
       "chmod +x /tmp/bootstrap.sh",
       "sudo sh /tmp/bootstrap.sh rabbitmq dev"
     ]
